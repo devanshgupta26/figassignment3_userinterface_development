@@ -75,53 +75,41 @@
 </head>
 <body>
   <!-- ========== HEADER ========== -->
-  <header>
+  <header role="banner">
     <div class="wrapper nav">
-      <!-- Hamburger for mobile -->
-      <button class="hamburger" aria-label="Open menu" id="hamburgerBtn">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M3 6h18M3 12h18M3 18h18"
-            stroke="#fff"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+      
+      <!-- Hamburger icon for mobile navigation toggle -->
+      <button class="hamburger" aria-label="Open menu" id="hamburgerBtn" aria-expanded="false">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-
-      <!-- Logo -->
-      <a href="index.html" class="logo">RIVER CITY</a>
-
-      <!-- Search (desktop) -->
-      <div class="search-bar" id = "searchBar">
-        <input type="text" placeholder="Search for anything for your home …" />
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M10.5 3a7.5 7.5 0 015.93 12.327l4.12 4.122-1.414 1.415-4.122-4.121A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"
-          />
+  
+      <!-- Website logo linking back to homepage -->
+      <a href="index.html" class="logo" aria-label="Home">RIVER CITY</a>
+  
+      <!-- Search bar with icon -->
+      <div class="search-bar" id="searchBar">
+        <input type="text" placeholder="Search for anything for your home …" aria-label="Search"/>
+        <svg viewBox="0 0 24 24">
+          <path d="M10.5 3a7.5 7.5 0 015.93 12.327l4.12 4.122-1.414 1.415-4.122-4.121A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/>
         </svg>
       </div>
-
-      <!-- Icons right -->
+  
+      <!-- User profile icon and cart link -->
       <div class="icon-group">
-        <!-- Search icon (mobile) -->
-        
-        <!-- Avatar -->
-        <div class="avatar" aria-label="Account"></div>
-        <!-- Cart -->
-        <!-- wrap the SVG -->
-      <a href="cartpage.html" aria-label="Cart">
+        <!-- Placeholder user avatar -->
+        <div class="avatar" role="img" aria-label="User profile"></div>
+  
+        <!-- Cart icon linking to cart page -->
+        <a href="cartpage.html" aria-label="View cart">
           <svg class="icon" viewBox="0 0 24 24">
-              <path
-              d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44A1.992 1.992 0 008 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12L10.1 14h7.45a2 2 0 001.9-1.37l3.24-9.28A1 1 0 0021.7 2H5.21l-.94-2H0v2h3l3.6 7.59 1.16 2.24L7 16h2l1 2h2v2h2v-2h8v-2h-2.42l1.24-4H9.44l-.94-2H18V8H7.42l-.94-2H7z"
-            />
-           </svg>
-      </a>
+            <path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44A1.992 1.992 0 008 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12L10.1 14h7.45a2 2 0 001.9-1.37l3.24-9.28A1 1 0 0021.7 2H5.21l-.94-2H0v2h3l3.6 7.59 1.16 2.24L7 16h2l1 2h2v2h2v-2h8v-2h-2.42l1.24-4H9.44l-.94-2H18V8H7.42l-.94-2H7z"/>
+          </svg>
+        </a>
       </div>
     </div>
   </header>
-
   <!-- DESKTOP MENU -->
   <nav class="menu-bar">
     <div class="wrapper menu">
@@ -180,57 +168,42 @@
 
   <!-- ========== JS ========== -->
   <script>
-    /* ============================================================================
-       River City – Checkout / Payment page interactivity
-       ========================================================================== */
+    // JavaScript for interactive elements
     document.addEventListener("DOMContentLoaded", () => {
-      /* ------------------------------------------------------------------------
-         1.  MOBILE DRAWER (hamburger menu)
-      ------------------------------------------------------------------------ */
-      const hamburgerBtn = document.getElementById("hamburgerBtn");
-      
-    
-      /* ------------------------------------------------------------------------
-         2.  SEARCH BAR – validate & redirect to searchpage.html?q=
-      ------------------------------------------------------------------------ */
-      const searchBar   = document.getElementById("searchBar");
+      // Hamburger menu 
+      const hamburger = document.getElementById("hamburgerBtn");
+      // Search bar and inputt
+      const searchBar = document.getElementById("searchBar");
       const searchInput = searchBar.querySelector("input");
-    
+
+      // search bar functionality
       function goToSearch() {
-        const q = searchInput.value.trim();
-        if (q.length < 2) {
+        const query = searchInput.value.trim();
+        // Validate input length
+        if (query.length < 2) {
           alert("Please enter at least 2 characters to search.");
           searchInput.focus();
           return;
         }
-        location.href = `searchpage.html?q=${encodeURIComponent(q)}`;
+        location.href = `searchpage.html?q=${encodeURIComponent(query)}`;
       }
-    
+
+      // Handle click on the search icon / background (not the input)
       searchBar.addEventListener("click", (e) => {
-        if (e.target !== searchInput) goToSearch();
+        if (e.target !== searchInput) {
+          // User clicked the surrounding div or the icon
+          goToSearch();
+        }
       });
-    
+
+      // Submit on ENTER inside the input navigates to search page
       searchInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
           goToSearch();
         }
       });
-    
-      /* ------------------------------------------------------------------------
-         3.  DESKTOP CATEGORY ARROW ROTATION
-      ------------------------------------------------------------------------ */
-      document.querySelectorAll(".menu-item").forEach((item) =>
-        item.addEventListener("click", () => {
-          const svg  = item.querySelector("svg");
-          const open = svg.style.transform === "rotate(270deg)";
-          svg.style.transform = open ? "rotate(90deg)" : "rotate(270deg)";
-        })
-      );
-    
-      /* ------------------------------------------------------------------------
-         4.  PAYMENT FORM VALIDATION
-      ------------------------------------------------------------------------ */
+      // Payment form validation
       const payForm     = document.getElementById("payForm");
       const fields      = payForm.querySelectorAll(".field");
     
@@ -304,27 +277,26 @@
           alert("Please correct the highlighted fields.");
           return;
         }
-    
-        /* --------------------------------------------------------------------
-           DEMO SUBMISSION – replace with real API call when back-end is ready
-        -------------------------------------------------------------------- */
         alert("Payment submitted successfully! (Demo)");
-        // window.location.href = "confirmation.html"; // future step 3
       });
-    
-      /* ------------------------------------------------------------------------
-         5.  AUTO-FOCUS NEXT FIELD (cards & dates) – minor UX sugar
-      ------------------------------------------------------------------------ */
+      // card number input formatting
       cardEl?.addEventListener("input", (e) => {
-        // add space every 4 digits for readability
+        // Remove all non-digit characters and limit to 19 digits
         let val = e.target.value.replace(/\D+/g, "").slice(0, 19);
+      
+        // Add a space every 4 digits for better readability (e.g. 1234 5678 9012 3456)
         e.target.value = val.replace(/(\d{4})(?=\d)/g, "$1 ");
       });
-    
+      
+      // Format expiration date input as MM/YY
       expEl?.addEventListener("input", (e) => {
-        // autoinsert slash
+        // Remove all non-digit characters and limit to 4 digits (MMYY)
         let val = e.target.value.replace(/\D+/g, "").slice(0, 4);
+      
+        // If more than 2 digits, insert a slash after MM (e.g. 12/25)
         if (val.length > 2) val = `${val.slice(0, 2)}/${val.slice(2)}`;
+      
+        // Update the input field with the formatted value
         e.target.value = val;
       });
     });
