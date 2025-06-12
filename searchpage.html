@@ -411,18 +411,81 @@
   
     <!-- ========== SCRIPT ========== -->
     <script>
-      // Mobile drawer open/close
-      const hamburgerBtn = document.getElementById('hamburgerBtn');
-  
-  
-      drawer.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => drawer.classList.remove('open'));
+      /* ============================================================================
+         River City – Search results page interactivity
+         ========================================================================== */
+      document.addEventListener("DOMContentLoaded", () => {
+        /* ------------------------------------------------------------------------
+           1.  MOBILE DRAWER (hamburger menu)
+        ------------------------------------------------------------------------ */
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+      
+        /* ------------------------------------------------------------------------
+           2.  SEARCH BAR (validation + redirect)
+        ------------------------------------------------------------------------ */
+        const searchBar   = document.getElementById("searchBar");
+        const searchInput = searchBar.querySelector("input");
+      
+        function goToSearch() {
+          const query = searchInput.value.trim();
+          if (query.length < 2) {
+            alert("Please enter at least 2 characters to search.");
+            searchInput.focus();
+            return;
+          }
+          location.href = `searchpage.html?q=${encodeURIComponent(query)}`;
+        }
+      
+        // Click on div / icon (but not the input itself)
+        searchBar.addEventListener("click", (e) => {
+          if (e.target !== searchInput) goToSearch();
+        });
+      
+        // Enter key inside the input
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            goToSearch();
+          }
+        });
+      
+        /* ------------------------------------------------------------------------
+           3.  READ QUERY PARAM → update header title & search box
+        ------------------------------------------------------------------------ */
+        const params = new URLSearchParams(location.search);
+        if (params.has("q")) {
+          const q = params.get("q").trim();
+          if (q) {
+            document.querySelector(".results-header h1").textContent = `Products for “${q}”`;
+            searchInput.value = q;
+          }
+        }
+      
+        /* ------------------------------------------------------------------------
+           4.  RESULT COUNT  (auto-counts cards that are present in markup/API)
+        ------------------------------------------------------------------------ */
+        const countEl   = document.querySelector(".results-header .count");
+        const cardTotal = document.querySelectorAll(".product-grid .card").length;
+        countEl.textContent = `${cardTotal} result${cardTotal !== 1 ? "s" : ""}`;
+      
+        /* ------------------------------------------------------------------------
+           5.  FILTER BUTTON (placeholder behaviour)
+        ------------------------------------------------------------------------ */
+        const filterBtn = document.querySelector(".filter-btn");
+        filterBtn.addEventListener("click", () =>
+          alert("Filter panel coming soon!  (This is just a placeholder interaction.)")
+        );
+      
+        /* ------------------------------------------------------------------------
+           6.  CARD LINKS  (already anchors, but add smooth scroll focus for A11y)
+        ------------------------------------------------------------------------ */
+        document.querySelectorAll(".product-grid .card").forEach((card) => {
+          card.addEventListener("click", () => {
+            // default anchor navigation fires first; this re-focuses main
+            setTimeout(() => document.querySelector("main").focus?.(), 150);
+          });
+        });
       });
-  
-      // Redirect on search click
-      document.getElementById('searchBar').addEventListener('click', () => {
-        location.href = 'searchpage.html';
-      });
-    </script>
+      </script>
   </body>
   </html>

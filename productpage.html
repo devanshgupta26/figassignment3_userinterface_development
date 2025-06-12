@@ -238,11 +238,12 @@
             transition: background 0.25s ease;
           }
           .buy-now {
-            background: #fff;
-            color: #000;
+            background: #181818;
+            color: #fff;
+            border: 1px solid #505050;
           }
           .buy-now:hover {
-            background: #eaeaea;
+            background: #2a2a2a;
           }
           .add-cart {
             background: #181818;
@@ -368,36 +369,83 @@
             <div class="swatch" style="background:#d8b9a6;"></div>
             <div class="swatch" style="background:#c0c0c0;"></div>
           </div>
-          <a href="checkout.html" class="cta-btn add-cart">BUY NOW</a>
+          <a href="checkout.html" class="cta-btn buy-now">BUY NOW</a>
           <a href="cartpage.html" class="cta-btn add-cart">ADD TO CART</a>
         </div>
       </div>
     </main>
 
-    <!-- ========== OPTIONAL JS ========== -->
     <script>
-      // Toggle desktop menu arrow rotation
-      document.querySelectorAll('.menu-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const svg = item.querySelector('svg');
-          const open = svg.style.transform === 'rotate(270deg)';
-          svg.style.transform = open ? 'rotate(90deg)' : 'rotate(270deg)';
+      /* ============================================================================
+         River City – Product page interactivity (Midnight velvet couch)
+         ========================================================================== */
+      document.addEventListener("DOMContentLoaded", () => {
+        /* ------------------------------------------------------------------------
+           1.  MOBILE DRAWER (hamburger menu)
+        ------------------------------------------------------------------------ */
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+      
+        /* ------------------------------------------------------------------------
+           2.  SEARCH BAR (validation + redirect)
+        ------------------------------------------------------------------------ */
+        const searchBar   = document.getElementById("searchBar");
+        const searchInput = searchBar.querySelector("input");
+      
+        function goToSearch() {
+          const query = searchInput.value.trim();
+          if (query.length < 2) {
+            alert("Please enter at least 2 characters to search.");
+            searchInput.focus();
+            return;
+          }
+          location.href = `searchpage.html?q=${encodeURIComponent(query)}`;
+        }
+      
+        searchBar.addEventListener("click", (e) => {
+          if (e.target !== searchInput) goToSearch();
         });
-      });
-
-
-      // Colour swatch selection
-      document.querySelectorAll('.swatch').forEach(swatch => {
-        swatch.addEventListener('click', () => {
-          document.querySelectorAll('.swatch').forEach(s => s.setAttribute('aria-checked', 'false'));
-          swatch.setAttribute('aria-checked', 'true');
+      
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            goToSearch();
+          }
         });
+      
+        /* ------------------------------------------------------------------------
+           3.  DESKTOP CATEGORY MENU ARROW ROTATION
+               (visual feedback only; could be expanded to show sub-menus later)
+        ------------------------------------------------------------------------ */
+        document.querySelectorAll(".menu-item").forEach((item) => {
+          item.addEventListener("click", () => {
+            const svg   = item.querySelector("svg");
+            const open  = svg.style.transform === "rotate(270deg)";
+            svg.style.transform = open ? "rotate(90deg)" : "rotate(270deg)";
+          });
+        });
+      
+        /* ------------------------------------------------------------------------
+           4.  COLOUR SWATCH SELECTION
+        ------------------------------------------------------------------------ */
+        const swatches = document.querySelectorAll(".swatch");
+        swatches.forEach((swatch) =>
+          swatch.addEventListener("click", () => {
+            swatches.forEach((s) => s.setAttribute("aria-checked", "false"));
+            swatch.setAttribute("aria-checked", "true");
+      
+          })
+        );
+      
+        /* ------------------------------------------------------------------------
+           5.  CTA BUTTONS – basic feedback
+        ------------------------------------------------------------------------ */
+        document.querySelector(".cta-btn.add-cart")?.addEventListener("click", (e) => {
+          e.preventDefault(); // stay on the page
+          alert("Added to cart!  (In a real build this would update the cart count.)");
+        });
+        
+      
       });
-   
-    </script>
-    <script>
-        document.getElementById('searchBar')
-        .addEventListener('click', () => location.href = 'searchpage.html');
-    </script>
+      </script>
 </body>
 </html>

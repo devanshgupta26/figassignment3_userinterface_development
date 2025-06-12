@@ -294,7 +294,7 @@
     <header role="banner">
       <div class="wrapper nav">
         <!-- Hamburger for mobile -->
-        <button class="hamburger" aria-label="Open menu" id="hamburgerBtn">
+        <button class="hamburger" aria-label="Open menu" id="hamburgerBtn" aria-expanded="false">
           <svg viewBox="0 0 24 24">
             <path d="M3 6h18M3 12h18M3 18h18" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -350,7 +350,7 @@
       <section class="hero" role="region" aria-label="Promotional banner">
         <div class="hero-content">
           <h1>Up to 25% off sale <br />storewide</h1>
-          <button class="btn-primary">Shop now</button>
+          <button class="btn-primary" id="shopNowBtn">Shop now</button>
         </div>
       </section>
   
@@ -372,13 +372,72 @@
   
     <!-- --------------- JS ---------------- -->
     <script>
-      // Mobile menu toggle
-      const hamburger = document.getElementById("hamburgerBtn");
-  
-      // Redirect to search page
-      document.getElementById("searchBar").addEventListener("click", () => {
-        location.href = "searchpage.html";
+      // Wait until the DOM is fully parsed
+      document.addEventListener("DOMContentLoaded", () => {
+        /* ---------------------------------------------------------- */
+        /*  MOBILE DRAWER (Hamburger Menu)                            */
+        /* ---------------------------------------------------------- */
+        const hamburger = document.getElementById("hamburgerBtn");
+    
+
+        /* ---------------------------------------------------------- */
+        /*  SEARCH BAR                                                */
+        /* ---------------------------------------------------------- */
+        const searchBar = document.getElementById("searchBar");
+        const searchInput = searchBar.querySelector("input");
+
+        // Redirect helper (with simple validation)
+        function goToSearch() {
+          const query = searchInput.value.trim();
+          if (query.length < 2) {
+            alert("Please enter at least 2 characters to search.");
+            searchInput.focus();
+            return;
+          }
+          location.href = `searchpage.html?q=${encodeURIComponent(query)}`;
+        }
+
+        // Handle click on the search icon / background (not the input)
+        searchBar.addEventListener("click", (e) => {
+          if (e.target !== searchInput) {
+            // User clicked the surrounding div or the icon
+            goToSearch();
+          }
+        });
+
+        // Submit on ENTER inside the input
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            goToSearch();
+          }
+        });
+
+        /* ---------------------------------------------------------- */
+        /*  HERO "SHOP NOW" BUTTON                                    */
+        /* ---------------------------------------------------------- */
+        const shopNowBtn = document.getElementById("shopNowBtn");
+        shopNowBtn.addEventListener("click", () => {
+          // Simple scroll to New Arrivals section for demo purposes
+          document.getElementById("new-arrivals-title").scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        });
+
+        /* ---------------------------------------------------------- */
+        /*  PRODUCT CARDS – quick nav based on title                  */
+        /* ---------------------------------------------------------- */
+        document.querySelectorAll(".card").forEach((card) => {
+          card.addEventListener("click", () => {
+            const text = card
+              .querySelector("p")
+              .textContent.trim()
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-");
+          });
+        });
       });
     </script>
   </body>
-  </html>
+</html>

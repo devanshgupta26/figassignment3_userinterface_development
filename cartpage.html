@@ -246,20 +246,140 @@
 
     <!-- ========== JS ========== -->
     <script>
-
-      /* -------- arrow rotation on desktop menu -------- */
-      document.querySelectorAll('.menu-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const arrow = item.querySelector('svg');
-          arrow.style.transform =
-            arrow.style.transform === 'rotate(270deg)' ? 'rotate(90deg)' : 'rotate(270deg)';
-        });
-      });
+      /* ============================================================================
+         River City – Cart page interactivity
+         ========================================================================== */
+      document.addEventListener("DOMContentLoaded", () => {
+        /* ------------------------------------------------------------------------
+           1.  MOBILE DRAWER (hamburger)
+        ------------------------------------------------------------------------ */
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        
       
-    </script>
-    <script>
-        document.getElementById('searchBar')
-        .addEventListener('click', () => location.href = 'searchpage.html');
-    </script>
+        /* ------------------------------------------------------------------------
+           2.  SEARCH BAR → redirect to searchpage.html?q=
+        ------------------------------------------------------------------------ */
+        const searchBar   = document.getElementById("searchBar");
+        const searchInput = searchBar.querySelector("input");
+      
+        function goToSearch() {
+          const query = searchInput.value.trim();
+          if (query.length < 2) {
+            alert("Please enter at least 2 characters to search.");
+            searchInput.focus();
+            return;
+          }
+          location.href = `searchpage.html?q=${encodeURIComponent(query)}`;
+        }
+      
+        searchBar.addEventListener("click", (e) => {
+          if (e.target !== searchInput) goToSearch();
+        });
+      
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            goToSearch();
+          }
+        });
+      
+        /* ------------------------------------------------------------------------
+           3.  DESKTOP CATEGORY ARROW ROTATION (visual only)
+        ------------------------------------------------------------------------ */
+        document.querySelectorAll(".menu-item").forEach((item) =>
+          item.addEventListener("click", () => {
+            const svg  = item.querySelector("svg");
+            const open = svg.style.transform === "rotate(270deg)";
+            svg.style.transform = open ? "rotate(90deg)" : "rotate(270deg)";
+          })
+        );
+      
+        /* ------------------------------------------------------------------------
+           4.  CART LOGIC – qty buttons, totals, shipping, savings
+        ------------------------------------------------------------------------ */
+        const cartTable   = document.getElementById("cartTable");
+        const grandTotal  = document.getElementById("grandTotal");
+        const savingsLine = document.getElementById("savingsLine");
+        const shippingSel = document.getElementById("shipping");
+      
+        /** Currency formatter */
+        const fmt = (n) => `$${n.toFixed(2)}`;
+      
+        /** Recalculate everything (row totals, grand total, savings) */
+        /** Recalculate everything (row totals, grand total, savings) */
+function recalc() {
+  let subtotal = 0;
+  let original = 0;
+
+  cartTable.querySelectorAll("tbody tr").forEach((row) => {
+    const qty = +row.querySelector(".qty-value").textContent;
+
+    /* ---------- price ---------- */
+    // use the DOM price first; use data-price only if it’s a usable number
+    const price = parseFloat(
+      (
+        // get text inside .price …
+        row.querySelector(".price")?.textContent ||
+        // …otherwise fall back to data-price
+        row.dataset.price ||
+        "0"
+      ).replace(/[^0-9.]/g, "")
+    );
+
+    /* ---------- original (strikethrough) price ---------- */
+    const orig = parseFloat(
+      (
+        row.querySelector(".original")?.textContent ||    // sale crossed-out price
+        row.querySelector(".price")?.textContent ||       // or current price
+        "0"
+      ).replace(/[^0-9.]/g, "")
+    );
+
+    /* ---------- row & cart totals ---------- */
+    const rowTotal = qty * price;
+    row.querySelector(".row-total").textContent = fmt(rowTotal);
+
+    subtotal += rowTotal;
+    original += qty * orig;
+  });
+
+  const shipping = parseFloat(shippingSel.value);
+  const total = subtotal + shipping;
+
+  grandTotal.textContent = fmt(total);
+
+  const savings = original - subtotal;
+  if (savings > 0) {
+    savingsLine.textContent = `You saved ${fmt(savings)}!`;
+    savingsLine.style.visibility = "visible";
+  } else {
+    savingsLine.textContent = "";
+    savingsLine.style.visibility = "hidden";
+  }
+}
+      
+        /** Handle +/- clicks */
+        cartTable.addEventListener("click", (e) => {
+          const btn = e.target.closest(".qty-btn");
+          if (!btn) return;
+      
+          const row  = btn.closest("tr");
+          const qtyV = row.querySelector(".qty-value");
+          let qty    = +qtyV.textContent;
+      
+          if (btn.classList.contains("plus")) qty++;
+          if (btn.classList.contains("minus")) qty = Math.max(1, qty - 1);
+      
+          qtyV.textContent = qty;
+          recalc();
+        });
+      
+        /* Shipping dropdown */
+        shippingSel.addEventListener("change", recalc);
+      
+        /* Initial calculation */
+        recalc();
+      });
+      </script>
   </body>
 </html>

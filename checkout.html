@@ -180,25 +180,154 @@
 
   <!-- ========== JS ========== -->
   <script>
-    /* hamburger / drawer */
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    /* arrow flip on desktop menu */
-    document.querySelectorAll('.menu-item').forEach(item=>{
-      item.addEventListener('click',()=>{
-        const svg=item.querySelector('svg');
-        svg.style.transform = svg.style.transform==='rotate(270deg)'?'rotate(90deg)':'rotate(270deg)';
+    /* ============================================================================
+       River City – Checkout / Payment page interactivity
+       ========================================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      /* ------------------------------------------------------------------------
+         1.  MOBILE DRAWER (hamburger menu)
+      ------------------------------------------------------------------------ */
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      
+    
+      /* ------------------------------------------------------------------------
+         2.  SEARCH BAR – validate & redirect to searchpage.html?q=
+      ------------------------------------------------------------------------ */
+      const searchBar   = document.getElementById("searchBar");
+      const searchInput = searchBar.querySelector("input");
+    
+      function goToSearch() {
+        const q = searchInput.value.trim();
+        if (q.length < 2) {
+          alert("Please enter at least 2 characters to search.");
+          searchInput.focus();
+          return;
+        }
+        location.href = `searchpage.html?q=${encodeURIComponent(q)}`;
+      }
+    
+      searchBar.addEventListener("click", (e) => {
+        if (e.target !== searchInput) goToSearch();
+      });
+    
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          goToSearch();
+        }
+      });
+    
+      /* ------------------------------------------------------------------------
+         3.  DESKTOP CATEGORY ARROW ROTATION
+      ------------------------------------------------------------------------ */
+      document.querySelectorAll(".menu-item").forEach((item) =>
+        item.addEventListener("click", () => {
+          const svg  = item.querySelector("svg");
+          const open = svg.style.transform === "rotate(270deg)";
+          svg.style.transform = open ? "rotate(90deg)" : "rotate(270deg)";
+        })
+      );
+    
+      /* ------------------------------------------------------------------------
+         4.  PAYMENT FORM VALIDATION
+      ------------------------------------------------------------------------ */
+      const payForm     = document.getElementById("payForm");
+      const fields      = payForm.querySelectorAll(".field");
+    
+      /** Simple Luhn check for card numbers */
+      const luhnCheck = (num) => {
+        let sum = 0, alt = false;
+        for (let i = num.length - 1; i >= 0; i--) {
+          let n = +num[i];
+          if (alt) {
+            n *= 2;
+            if (n > 9) n -= 9;
+          }
+          sum += n;
+          alt = !alt;
+        }
+        return sum % 10 === 0;
+      };
+    
+      /** Remove previous error styles */
+      function clearErrors() {
+        fields.forEach((f) => (f.style.borderColor = ""));
+      }
+    
+      payForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        clearErrors();
+    
+        const [nameEl, cardEl, expEl, cvvEl] = fields;
+        let valid = true;
+    
+        // Name
+        if (!nameEl.value.trim()) {
+          nameEl.style.borderColor = "#ff4d4d";
+          valid = false;
+        }
+    
+        // Card number
+        const cardNum = cardEl.value.replace(/\s+/g, "");
+        if (!/^\d{13,19}$/.test(cardNum) || !luhnCheck(cardNum)) {
+          cardEl.style.borderColor = "#ff4d4d";
+          valid = false;
+        }
+    
+        // Expiry MM/YY or MM/YYYY
+        const expMatch = expEl.value.trim().match(/^(\d{2})\s*\/\s*(\d{2,4})$/);
+        if (!expMatch) {
+          expEl.style.borderColor = "#ff4d4d";
+          valid = false;
+        } else {
+          let [ , mm, yy ] = expMatch;
+          mm = +mm;
+          yy = +yy;
+          if (yy < 100) yy += 2000; // convert YY→YYYY
+    
+          const expDate = new Date(yy, mm); // 1st of next month
+          const now     = new Date();
+    
+          if (mm < 1 || mm > 12 || expDate <= now) {
+            expEl.style.borderColor = "#ff4d4d";
+            valid = false;
+          }
+        }
+    
+        // CVV
+        if (!/^\d{3,4}$/.test(cvvEl.value.trim())) {
+          cvvEl.style.borderColor = "#ff4d4d";
+          valid = false;
+        }
+    
+        if (!valid) {
+          alert("Please correct the highlighted fields.");
+          return;
+        }
+    
+        /* --------------------------------------------------------------------
+           DEMO SUBMISSION – replace with real API call when back-end is ready
+        -------------------------------------------------------------------- */
+        alert("Payment submitted successfully! (Demo)");
+        // window.location.href = "confirmation.html"; // future step 3
+      });
+    
+      /* ------------------------------------------------------------------------
+         5.  AUTO-FOCUS NEXT FIELD (cards & dates) – minor UX sugar
+      ------------------------------------------------------------------------ */
+      cardEl?.addEventListener("input", (e) => {
+        // add space every 4 digits for readability
+        let val = e.target.value.replace(/\D+/g, "").slice(0, 19);
+        e.target.value = val.replace(/(\d{4})(?=\d)/g, "$1 ");
+      });
+    
+      expEl?.addEventListener("input", (e) => {
+        // autoinsert slash
+        let val = e.target.value.replace(/\D+/g, "").slice(0, 4);
+        if (val.length > 2) val = `${val.slice(0, 2)}/${val.slice(2)}`;
+        e.target.value = val;
       });
     });
-
-    /* fake confirmation */
-    document.getElementById('payForm').addEventListener('submit',e=>{
-      e.preventDefault();
-      alert('Payment submitted! (demo)');
-    });
-  </script>
-  <script>
-    document.getElementById('searchBar')
-    .addEventListener('click', () => location.href = 'searchpage.html');
-</script>
+    </script>
 </body>
 </html>
