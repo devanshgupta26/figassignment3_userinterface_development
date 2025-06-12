@@ -1,0 +1,204 @@
+<!-- RIVER CITY – Payment / Checkout Page (responsive) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>River City – Payment</title>
+
+  <style>
+    /* ========== RESET & BASICS ========== */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    img{max-width:100%;display:block;}
+    a{text-decoration:none;color:inherit;}
+    button{border:none;background:none;color:inherit;font:inherit;cursor:pointer;}
+    body{font-family:Arial,Helvetica,sans-serif;line-height:1.4;color:#fff;background:#0f0f0f;}
+    .wrapper{max-width:1400px;margin:0 auto;padding:0 1rem;}
+
+    /* ========== HEADER ========== */
+    header{background:#000;position:sticky;top:0;z-index:50;}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;}
+    .logo{font-size:1.6rem;font-weight:700;letter-spacing:1px;}
+    .hamburger{display:none;margin-right:1rem;}
+    .hamburger svg{width:28px;height:28px;fill:#fff;}
+
+    .search-bar{flex:1;margin:0 2rem;position:relative;}
+    .search-bar input{width:100%;padding:0.75rem 3.2rem 0.75rem 1rem;border-radius:4px;border:1px solid #e1e1e1b2;background:#181814;color:#e1e1e1b2;font-size:0.95rem;}
+    .search-bar svg{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;fill:#58a6ff;pointer-events:none;}
+
+    .icon-group{display:flex;align-items:center;gap:1.25rem;}
+    .icon{width:26px;height:26px;fill:#fff;cursor:pointer;}
+    .avatar{width:30px;height:30px;border-radius:50%;background:#999;}
+
+    /* ========== DESKTOP MENU ========== */
+    .menu-bar{background:#000;}
+    .menu{display:flex;gap:2rem;padding:0.8rem 0;font-size:0.93rem;overflow-x:auto;}
+    .menu-item{display:flex;align-items:center;gap:0.25rem;white-space:nowrap;cursor:pointer;}
+    .menu-item svg{width:10px;height:10px;fill:#fff;transform:rotate(90deg);transition:transform 0.25s ease;}
+
+    /* ========== MOBILE DRAWER ========== */
+    .mobile-drawer{position:fixed;inset:0 0 0 -100%;background:#000;width:75%;max-width:320px;padding:4rem 1rem 2rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;transition:transform 0.35s ease;}
+    .mobile-drawer.open{transform:translateX(100%);}
+    .mobile-drawer a{padding:.8rem 0;border-bottom:1px solid #222;}
+
+    /* ========== PAYMENT LAYOUT ========== */
+    main{background:#1d1d1d;padding:3rem 0 5rem;}
+    .payment-box{max-width:800px;margin:0 auto;}
+
+    /* --- step indicator --- */
+    .steps{display:flex;justify-content:center;gap:4.5rem;margin-bottom:4rem;list-style:none;}
+    .steps li{text-align:center;font-size:.9rem;color:#999;}
+    .steps .circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .6rem;}
+    .steps .done{background:#555;color:#fff;}
+    .steps .current{background:#fff;color:#000;font-weight:700;}
+    .steps .todo{background:#333;color:#777;}
+
+    /* --- form --- */
+    form{display:grid;grid-template-columns:1fr 1fr;gap:2rem 2.2rem;}
+    .field{padding:1rem;border:none;border-radius:3px;background:#fff;color:#000;font-size:.95rem;}
+
+    /* --- confirm button --- */
+    .confirm-btn{margin:3.5rem auto 0;display:flex;align-items:center;gap:.6rem;background:#000;color:#fff;padding:1.2rem 3.5rem;font-weight:600;border-radius:4px;transition:background .25s ease;}
+    .confirm-btn:hover{background:#1a1a1a;}
+
+    /* ========== MEDIA QUERIES ========== */
+    @media(max-width:768px){
+      .hamburger{display:block;}
+      .search-bar{margin:0 1rem;}
+      .menu-bar{display:none;}
+      form{grid-template-columns:1fr;}
+    }
+    @media(max-width:480px){
+      .logo{font-size:1.4rem;}
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="wrapper nav">
+      <!-- Hamburger for mobile -->
+      <button class="hamburger" aria-label="Open menu" id="hamburgerBtn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M3 6h18M3 12h18M3 18h18"
+            stroke="#fff"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <!-- Logo -->
+      <a href="home.html" class="logo">RIVER CITY</a>
+
+      <!-- Search (desktop) -->
+      <div class="search-bar" id = "searchBar">
+        <input type="text" placeholder="Search for anything for your home …" />
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M10.5 3a7.5 7.5 0 015.93 12.327l4.12 4.122-1.414 1.415-4.122-4.121A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"
+          />
+        </svg>
+      </div>
+
+      <!-- Icons right -->
+      <div class="icon-group">
+        <!-- Search icon (mobile) -->
+        
+        <!-- Avatar -->
+        <div class="avatar" aria-label="Account"></div>
+        <!-- Cart -->
+        <!-- wrap the SVG -->
+      <a href="cartpage.html" aria-label="Cart">
+          <svg class="icon" viewBox="0 0 24 24">
+              <path
+              d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44A1.992 1.992 0 008 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12L10.1 14h7.45a2 2 0 001.9-1.37l3.24-9.28A1 1 0 0021.7 2H5.21l-.94-2H0v2h3l3.6 7.59 1.16 2.24L7 16h2l1 2h2v2h2v-2h8v-2h-2.42l1.24-4H9.44l-.94-2H18V8H7.42l-.94-2H7z"
+            />
+           </svg>
+      </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- DESKTOP MENU -->
+  <nav class="menu-bar">
+    <div class="wrapper menu">
+      <div class="menu-item">Living room <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="menu-item">Bedroom <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="menu-item">Dining  <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="menu-item">Home office <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="menu-item">Outdoor furniture <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+    </div>
+  </nav>
+
+  <!-- MOBILE DRAWER -->
+  <aside id="mobileDrawer" class="mobile-drawer" aria-hidden="true">
+    <nav class="drawer-nav">
+      <a href="#">Living room</a>
+      <a href="#">Bedroom</a>
+      <a href="#">Dining</a>
+      <a href="#">Home office</a>
+      <a href="#">Outdoor furniture</a>
+    </nav>
+  </aside>
+
+  <!-- ========== PAYMENT SECTION ========== -->
+  <main>
+    <div class="wrapper payment-box">
+      <!-- step indicator -->
+      <ol class="steps">
+        <li>
+          <div class="circle done">1</div>
+          <span>Delivery</span>
+        </li>
+        <li>
+          <div class="circle current">2</div>
+          <span>Payment</span>
+        </li>
+        <li>
+          <div class="circle todo">3</div>
+          <span>Confirmation</span>
+        </li>
+      </ol>
+
+      <!-- card form -->
+      <form id="payForm">
+        <input class="field" placeholder="Name on card" required />
+        <input class="field" placeholder="Card Number" required />
+        <input class="field" placeholder="Expiration date" required />
+        <input class="field" placeholder="Security Code" required />
+      </form>
+
+      <!-- confirm btn -->
+      <button form="payForm" class="confirm-btn">
+        CONFIRM
+      </button>
+    </div>
+  </main>
+
+  <!-- ========== JS ========== -->
+  <script>
+    /* hamburger / drawer */
+
+    /* arrow flip on desktop menu */
+    document.querySelectorAll('.menu-item').forEach(item=>{
+      item.addEventListener('click',()=>{
+        const svg=item.querySelector('svg');
+        svg.style.transform = svg.style.transform==='rotate(270deg)'?'rotate(90deg)':'rotate(270deg)';
+      });
+    });
+
+    /* fake confirmation */
+    document.getElementById('payForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      alert('Payment submitted! (demo)');
+    });
+  </script>
+  <script>
+    document.getElementById('searchBar')
+    .addEventListener('click', () => location.href = 'searchpage.html');
+</script>
+</body>
+</html>

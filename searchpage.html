@@ -1,0 +1,447 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>River City – Search results</title>
+    <style>
+      /* ------------------------------------------------------------- */
+      /* 1. RESET & BASICS                                            */
+      /* ------------------------------------------------------------- */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        border: none;
+        background: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.4;
+        color: #fff;
+        background: #0f0f0f;
+      }
+      .wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      /* ------------------------------------------------------------- */
+      /* 2. HEADER (re‑used from homepage)                             */
+      /* ------------------------------------------------------------- */
+      header {
+        background: #000;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+      }
+      .logo {
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      .hamburger {
+        display: none;
+        margin-right: 1rem;
+      }
+      .hamburger svg {
+        width: 28px;
+        height: 28px;
+        fill: #fff;
+      }
+      /* --- Search bar --- */
+      .search-bar {
+        flex: 1;
+        margin: 0 2rem;
+        position: relative;
+      }
+      .search-bar input {
+        width: 100%;
+        padding: 0.75rem 3.2rem 0.75rem 1rem;
+        border-radius: 4px;
+        border: 1px solid #e1e1e1b2;
+        background: #181814;
+        color: #e1e1e1b2;
+        font-size: 0.95rem;
+      }
+      .search-bar svg {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 22px;
+        height: 22px;
+        fill: #58a6ff;
+        pointer-events: none;
+      }
+      /* --- Icons --- */
+      .icon-group {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+      }
+      .icon {
+        width: 26px;
+        height: 26px;
+        fill: #fff;
+        cursor: pointer;
+      }
+      .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #999;
+      }
+
+      /* ------------------------------------------------------------- */
+      /* 3. NAV MENU (desktop + mobile drawer)                         */
+      /* ------------------------------------------------------------- */
+      .menu-bar {
+        background: #000;
+      }
+      .menu {
+        display: flex;
+        gap: 2rem;
+        padding: 0.8rem 0;
+        font-size: 0.93rem;
+        overflow-x: auto;
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .menu-item svg {
+        width: 10px;
+        height: 10px;
+        fill: #fff;
+        transform: rotate(90deg);
+        transition: transform 0.25s ease;
+      }
+      /* Mobile drawer */
+      .mobile-drawer {
+        position: fixed;
+        inset: 0 0 0 -100%;
+        background: #000;
+        width: 75%;
+        max-width: 320px;
+        padding: 4rem 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        overflow-y: auto;
+        transition: transform 0.35s ease;
+      }
+      .mobile-drawer.open {
+        transform: translateX(100%);
+      }
+
+      /* ------------------------------------------------------------- */
+      /* 4. RESULTS SECTION                                            */
+      /* ------------------------------------------------------------- */
+      main {
+        background: #232323;
+        padding: 3rem 0 5rem;
+      }
+      .results-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+      }
+      .results-header h1 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+      }
+      .results-header .count {
+        font-size: 0.9rem;
+        color: #bdbdbd;
+      }
+      .filter-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.9rem;
+      }
+      .filter-btn svg {
+        width: 18px;
+        height: 18px;
+        fill: #fff;
+      }
+
+      /* Product grid */
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2.2rem 2rem;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+      }
+      .card img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 0.8rem;
+      }
+      .product-name {
+        font-size: 0.97rem;
+        margin-bottom: 0.35rem;
+      }
+      .price {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #58a6ff;
+      }
+      .price .original {
+        margin-left: 0.4rem;
+        color: #9e9e9e;
+        text-decoration: line-through;
+        font-weight: 400;
+        font-size: 0.8rem;
+      }
+
+      /* ------------------------------------------------------------- */
+      /* 5. MEDIA QUERIES                                              */
+      /* ------------------------------------------------------------- */
+      @media (max-width: 950px) {
+        .product-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+      }
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+        .search-bar {
+          margin: 0 1rem;
+        }
+        .menu-bar {
+          display: none;
+        }
+        .results-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .filter-btn {
+          align-self: flex-end;
+        }
+      }
+      @media (max-width: 480px) {
+        .product-grid {
+          grid-template-columns: 1fr;
+        }
+        .card img {
+          height: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ==================== HEADER ==================== -->
+    <header>
+        <div class="wrapper nav">
+          <!-- Hamburger for mobile -->
+          <button class="hamburger" aria-label="Open menu" id="hamburgerBtn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 6h18M3 12h18M3 18h18"
+                stroke="#fff"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+  
+          <!-- Logo -->
+          <a href="home.html" class="logo">RIVER CITY</a>
+  
+          <!-- Search (desktop) -->
+          <div class="search-bar" id = "searchBar" >
+            <input type="text" placeholder="Search for anything for your home …" />
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M10.5 3a7.5 7.5 0 015.93 12.327l4.12 4.122-1.414 1.415-4.122-4.121A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"
+              />
+            </svg>
+          </div>
+  
+          <!-- Icons right -->
+          <div class="icon-group">
+            <!-- Search icon (mobile) -->
+            
+            <!-- Avatar -->
+            <div class="avatar" aria-label="Account"></div>
+            <!-- Cart -->
+            <!-- wrap the SVG -->
+          <a href="cartpage.html" aria-label="Cart">
+              <svg class="icon" viewBox="0 0 24 24">
+                  <path
+                  d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44A1.992 1.992 0 008 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12L10.1 14h7.45a2 2 0 001.9-1.37l3.24-9.28A1 1 0 0021.7 2H5.21l-.94-2H0v2h3l3.6 7.59 1.16 2.24L7 16h2l1 2h2v2h2v-2h8v-2h-2.42l1.24-4H9.44l-.94-2H18V8H7.42l-.94-2H7z"
+                />
+               </svg>
+          </a>
+          </div>
+        </div>
+      </header>
+
+    <!-- ==================== MENU (DESKTOP) ==================== -->
+    <nav class="menu-bar">
+      <div class="wrapper menu" id="desktopMenu">
+        <div class="menu-item">Living room <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+        <div class="menu-item">Bedroom <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+        <div class="menu-item">Dining <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+        <div class="menu-item">Home office <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+        <div class="menu-item">Outdoor furniture <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+      </div>
+    </nav>
+
+    <!-- ==================== MOBILE DRAWER ==================== -->
+    <aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+      <nav class="drawer-nav">
+        <a href="#" class="menu-item">Living room</a>
+        <a href="#" class="menu-item">Bedroom</a>
+        <a href="#" class="menu-item">Dining</a>
+        <a href="#" class="menu-item">Home office</a>
+        <a href="#" class="menu-item">Outdoor furniture</a>
+      </nav>
+    </aside>
+
+    <!-- ==================== RESULTS GRID ==================== -->
+    <main>
+      <div class="wrapper">
+        <!-- header row -->
+        <div class="results-header">
+          <div>
+            <h1>Products for “sofa”</h1>
+            <p class="count">188 results</p>
+          </div>
+          <button class="filter-btn" aria-label="Open filters">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 5h18M6 12h12M10 19h4"
+                stroke="#fff"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            FILTER
+          </button>
+        </div>
+
+        <!-- product grid -->
+        <div class="product-grid">
+            <!-- 1 -->
+            <a href="productpage.html" class="card">
+              <img src="sofa_1.jpeg" alt="Cream 3-Seat Sofa" loading="lazy" />
+              <p class="product-name">Cream 3-Seat Sofa</p>
+              <p class="price">$1,249.00 <span class="original">$1,649.00</span></p>
+            </a>
+          
+            <!-- 2 -->
+            <a href="productpage.html" class="card">
+              <img src="sofa_2.avif" alt="Plush White Sectional" loading="lazy" />
+              <p class="product-name">Plush White Sectional</p>
+              <p class="price">$2,399.00 <span class="original">$3,080.00</span></p>
+            </a>
+          
+            <!-- 3 -->
+            <a href="productpage.html" class="card">
+              <img src="sofa_3.webp" alt="Olive-Green Velvet Sofa" loading="lazy" />
+              <p class="product-name">Olive-Green Velvet Sofa</p>
+              <p class="price">$1,495.00 <span class="original">$1,895.00</span></p>
+            </a>
+          
+            <!-- 4 -->
+            <a href="productpage.html" class="card">
+              <img src="sofa_4.jpg" alt="Terracotta Modular Couch" loading="lazy" />
+              <p class="product-name">Terracotta Modular Couch</p>
+              <p class="price">$2,029.00 <span class="original">$2,699.00</span></p>
+            </a>
+          
+            <!-- 5 -->
+            <a href="productpage.html" class="card">
+              <img src="couch_product.webp" alt="Midnight Velvet Couch" loading="lazy" />
+              <p class="product-name">Midnight Velvet Couch</p>
+              <p class="price">$1,879.00 <span class="original">$2,350.00</span></p>
+            </a>
+          
+            <!-- repeat sequence once more -->
+            <a href="productpage.html" class="card">
+              <img src="sofa_1.jpeg" alt="Cream 3-Seat Sofa" loading="lazy" />
+              <p class="product-name">Cream 3-Seat Sofa</p>
+              <p class="price">$1,249.00 <span class="original">$1,649.00</span></p>
+            </a>
+          
+            <a href="productpage.html" class="card">
+              <img src="sofa_2.avif" alt="Plush White Sectional" loading="lazy" />
+              <p class="product-name">Plush White Sectional</p>
+              <p class="price">$2,399.00 <span class="original">$3,080.00</span></p>
+            </a>
+          
+            <a href="productpage.html" class="card">
+              <img src="sofa_3.webp" alt="Olive-Green Velvet Sofa" loading="lazy" />
+              <p class="product-name">Olive-Green Velvet Sofa</p>
+              <p class="price">$1,495.00 <span class="original">$1,895.00</span></p>
+            </a>
+          
+            <a href="productpage.html" class="card">
+              <img src="sofa_4.jpg" alt="Terracotta Modular Couch" loading="lazy" />
+              <p class="product-name">Terracotta Modular Couch</p>
+              <p class="price">$2,029.00 <span class="original">$2,699.00</span></p>
+            </a>
+          
+            <a href="productpage.html" class="card">
+              <img src="couch_product.webp" alt=">Midnight Velvet Couch" loading="lazy" />
+              <p class="product-name">Midnight Velvet Couch</p>
+              <p class="price">$1,879.00 <span class="original">$2,350.00</span></p>
+            </a>
+          </div>
+
+            
+            <script>
+
+      // Mobile drawer logic
+     
+      // Close drawer when clicking a link (optional)
+      drawer.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => drawer.classList.remove("open"));
+      });
+    </script>
+    <script>
+        document.getElementById('searchBar')
+        .addEventListener('click', () => location.href = 'searchpage.html');
+    </script>
+  </body>
+</html>
+        
